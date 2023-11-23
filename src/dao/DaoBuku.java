@@ -16,6 +16,7 @@ import javax.persistence.TypedQuery;
 import servis.ServiceBuku;
 import parsisten.Buku;
 import parsisten.DetailBuku;
+import parsisten.Kategori;
 import parsisten.Peminjaman;
 import servis.ServicePeminjaman;
 
@@ -174,16 +175,18 @@ public class DaoBuku implements ServiceBuku {
 
     @Override
     public List<Buku> getByKategori(String kategori) {
-        String sql = "SELECT b.* FROM Buku b WHERE b.id_buku IN "
-                + "(SELECT kb.ID_BUKU FROM KATEGORI_BUKU kb WHERE LOWER(kb.KATEGORI) LIKE ?) "
-                + "ORDER BY b.id_buku";
+        String sql = "SELECT k FROM Kategori k WHERE LOWER(k.kategori) LIKE ?;";
         EntityManager em = Persistence.createEntityManagerFactory("LibraLinxPU").createEntityManager();
         em.getTransaction().begin();
-        Query query = em.createNativeQuery(sql, Buku.class);
+        Query query = em.createNativeQuery(sql, Kategori.class);
         query.setParameter(1, "%" + kategori.toLowerCase() + "%");
-        List<Buku> list = query.getResultList();
+        List<Kategori> kat = query.getResultList();
         em.getTransaction().commit();
         em.close();
+        List<Buku> list = new ArrayList();
+        for(Kategori k : kat){
+            list.addAll(k.getBukuCollection());
+        }
         for (int i = 0; i < list.size(); i++) {
             Buku b = list.get(i);
             b.setPengarang(ambilPengarang(b.getIdBuku()));

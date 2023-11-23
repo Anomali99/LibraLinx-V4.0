@@ -16,6 +16,10 @@ public interface ServiceLaporan {
     JasperPrint cetakBuku(JPanel jp);
     JasperPrint cetakSkripsi(JPanel jp);
     JasperPrint cetakAnggota(JPanel jp);
+    JasperPrint laporanPeminjamanPerbulan(JPanel jp);
+    JasperPrint laporanPeminjamanTerbanyak(JPanel jp);
+    JasperPrint laporanPeminjamanPerAngkatan(JPanel jp);
+    JasperPrint laporanPeminjamanKategoriTerbanyak(JPanel jp);
     JasperPrint laporanPeminjaman(String no);
     JasperPrint cetakBukuCari(JPanel jp,String s, String k);
     JasperPrint cetakSkripsiCari(JPanel jp,String s, String k);

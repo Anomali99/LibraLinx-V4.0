@@ -69,23 +69,12 @@ public class DaoLaporan implements ServiceLaporan {
     public JasperPrint laporanPeminjaman(String no) {
         String reportPath = "src/report/LaporanPeminjaman.jrxml";
         Peminjaman p = servis.getByNo(no);
-        List<DetailBuku> db = new ArrayList(p.getDetailBukuCollection());
         List<DetailSkripsi> ds = new ArrayList(p.getDetailSkripsiCollection());
-        for (DetailSkripsi s : ds) {
-            DetailBuku b = new DetailBuku();
-            Buku bk = new Buku();
-            bk.setIdBuku(s.getSkripsi().getIdSkripsi());
-            bk.setJudul(s.getSkripsi().getJudul());
-            bk.setBahasa(s.getSkripsi().getBahasa());
-            bk.setFotoSampul(s.getSkripsi().getFotoSampul());
-            b.setBuku(bk);
-            b.setJumlah(s.getJumlah());
-            db.add(b);
-        }
+        List<DetailBuku> Db = combine(new ArrayList(p.getDetailBukuCollection()), ds);
         EntityManagerFactory emf = Persistence.createEntityManagerFactory("LibraLinxPU");
         EntityManager em = emf.createEntityManager();
         em.getTransaction().begin();
-        JRBeanCollectionDataSource dataSource = new JRBeanCollectionDataSource(db);
+        JRBeanCollectionDataSource dataSource = new JRBeanCollectionDataSource(Db);
         HashMap<String, Object> par = new HashMap<>();
         par.put("nama", p.getPeminjam().getNama());
         par.put("tgl1", p.getTglPinjam());
@@ -235,6 +224,9 @@ public class DaoLaporan implements ServiceLaporan {
         par.put("berdasarkan", k);
         JRBeanCollectionDataSource dataSource = new JRBeanCollectionDataSource(result);
         JasperPrint print = null;
+//            for(JRPrintPage pr : print2.getPages()){
+//                print.addPage(pr);
+//            }
         try {
             JasperReport jasperReport = JasperCompileManager.compileReport(reportPath);
             print = JasperFillManager.fillReport(jasperReport, par, dataSource);
@@ -293,6 +285,59 @@ public class DaoLaporan implements ServiceLaporan {
             Logger.getLogger(DaoLaporan.class.getName()).log(Level.SEVERE, null, ex);
         }
         return print;
+    }
+    
+    private List<DetailBuku> combine(List<DetailBuku> bk, List<DetailSkripsi> sk){
+        for (DetailSkripsi s : sk) {
+            DetailBuku db = new DetailBuku();
+            Buku b = new Buku();
+            b.setIdBuku(s.getSkripsi().getIdSkripsi());
+            b.setJudul(s.getSkripsi().getJudul());
+            b.setBahasa(s.getSkripsi().getBahasa());
+            b.setFotoSampul(s.getSkripsi().getFotoSampul());
+            db.setBuku(b);
+            db.setJumlah(s.getJumlah());
+            bk.add(db);
+        }
+        return bk;
+    }
+
+    @Override
+    public JasperPrint laporanPeminjamanPerbulan(JPanel jp) {
+        String reportPath = "src/report/LaporanSkripsiCr.jrxml";
+        List<Skripsi> result = new ArrayList();
+        HashMap<String, Object> par = new HashMap<>();
+//        par.put("cari", s);
+//        par.put("berdasarkan", k);
+        JRBeanCollectionDataSource dataSource = new JRBeanCollectionDataSource(result);
+        JasperPrint print = null;
+        try {
+            JasperReport jasperReport = JasperCompileManager.compileReport(reportPath);
+            print = JasperFillManager.fillReport(jasperReport, par, dataSource);
+            jp.removeAll();
+            jp.setLayout(new BorderLayout());
+            jp.repaint();
+            jp.add(new JRViewer(print));
+            jp.revalidate();
+        } catch (JRException ex) {
+            Logger.getLogger(DaoLaporan.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return print;
+    }
+
+    @Override
+    public JasperPrint laporanPeminjamanTerbanyak(JPanel jp) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public JasperPrint laporanPeminjamanPerAngkatan(JPanel jp) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public JasperPrint laporanPeminjamanKategoriTerbanyak(JPanel jp) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
 }

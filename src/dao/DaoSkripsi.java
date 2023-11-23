@@ -14,6 +14,7 @@ import javax.persistence.Persistence;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import parsisten.DetailSkripsi;
+import parsisten.Kategori;
 import parsisten.Peminjaman;
 import parsisten.Skripsi;
 import servis.ServicePeminjaman;
@@ -150,16 +151,18 @@ public class DaoSkripsi implements ServiceSkripsi {
 
     @Override
     public List<Skripsi> getByKategori(String kategori) {
-        String sql = "SELECT b.* FROM Skripsi b WHERE b.id_skripsi IN "
-                + "(SELECT kb.ID_SKRIPSI FROM KATEGORI_SKRIPSI kb WHERE LOWER(kb.KATEGORI) LIKE ?) "
-                + "ORDER BY b.id_skripsi";
+        String sql = "SELECT k FROM Kategori k WHERE LOWER(k.kategori) LIKE ?;";
         EntityManager em = Persistence.createEntityManagerFactory("LibraLinxPU").createEntityManager();
         em.getTransaction().begin();
-        Query query = em.createNativeQuery(sql, Skripsi.class);
+        Query query = em.createNativeQuery(sql, Kategori.class);
         query.setParameter(1, "%" + kategori.toLowerCase() + "%");
-        List<Skripsi> list = query.getResultList();
+        List<Kategori> kat = query.getResultList();
         em.getTransaction().commit();
         em.close();
+        List<Skripsi> list = new ArrayList();
+        for(Kategori k : kat){
+            list.addAll(k.getSkripsiCollection());
+        }
         return list;
     }
 

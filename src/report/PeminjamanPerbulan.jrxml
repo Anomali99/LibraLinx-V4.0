@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="null" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="ef80c42f-5a6d-4a96-8598-c0436a8c0c5c">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<queryString language="SQL">
+		<![CDATA[SELECT *, EXTRACT(YEAR FROM tanggal_pinjam) AS tahun, EXTRACT(MONTH FROM tanggal_pinjam) AS bulan FROM peminjaman]]>
+	</queryString>
+	<field name="id_petugas" class="java.lang.String"/>
+	<field name="id_peminjam" class="java.lang.String"/>
+	<field name="no_peminjaman" class="java.lang.String"/>
+	<field name="tanggal_pinjam" class="java.sql.Date"/>
+	<field name="tanggal_kembali" class="java.sql.Date"/>
+	<field name="keterangan" class="java.lang.String"/>
+	<field name="status" class="java.lang.String"/>
+	<field name="tahun" class="java.math.BigDecimal"/>
+	<field name="bulan" class="java.math.BigDecimal"/>
+	<variable name="bulan_1" class="java.math.BigDecimal" resetType="Column" calculation="First">
+		<variableExpression><![CDATA[$F{bulan}]]></variableExpression>
+	</variable>
+	<group name="bulan">
+		<groupExpression><![CDATA[$F{bulan}]]></groupExpression>
+	</group>
+	<group name="tahun">
+		<groupExpression><![CDATA[$F{tahun}]]></groupExpression>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="79" splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band height="35" splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band height="61" splitType="Stretch">
+			<textField evaluationTime="Column">
+				<reportElement x="0" y="0" width="100" height="20" uuid="71aa7ff3-73a3-4219-ba64-2a511652106b"/>
+				<textFieldExpression><![CDATA[$V{bulan_1}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="0" y="41" width="92" height="20" uuid="ec3800bf-74ce-4538-be60-d23a892cde15"/>
+				<text><![CDATA[id_peminjam]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="92" y="41" width="92" height="20" uuid="63c9c232-5fb4-47a2-ab6c-7118924e9677"/>
+				<text><![CDATA[keterangan]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="184" y="41" width="92" height="20" uuid="102df9a7-0aa2-46a7-a9c7-b663fe1c3492"/>
+				<text><![CDATA[tanggal_kembali]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="276" y="41" width="92" height="20" uuid="f463f866-d787-450f-a0d5-14b16debec8d"/>
+				<text><![CDATA[status]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="368" y="41" width="92" height="20" uuid="d9ae1741-208c-4544-9c78-d2f6d28cdc99"/>
+				<text><![CDATA[id_petugas]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="460" y="41" width="92" height="20" uuid="492706c3-e0c4-49cc-8e6d-e08cd8d441bb"/>
+				<text><![CDATA[tanggal_pinjam]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="20" splitType="Stretch">
+			<textField>
+				<reportElement x="0" y="0" width="92" height="20" uuid="dc10e194-0c85-41b0-8bf6-e80e74ec7f4b"/>
+				<textFieldExpression><![CDATA[$F{id_peminjam}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="92" y="0" width="92" height="20" uuid="873b21d4-c803-4525-86c7-833f4b1ef461"/>
+				<textFieldExpression><![CDATA[$F{keterangan}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="184" y="0" width="92" height="20" uuid="bd779415-2308-4ce8-81d1-1765c1c5ce1c"/>
+				<textFieldExpression><![CDATA[$F{tanggal_kembali}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="276" y="0" width="92" height="20" uuid="29d18823-a75f-4bac-9594-d26825e66a7b"/>
+				<textFieldExpression><![CDATA[$F{status}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="368" y="0" width="92" height="20" uuid="4690c713-ac0f-41c9-ad9c-39500214b141"/>
+				<textFieldExpression><![CDATA[$F{id_petugas}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="460" y="0" width="92" height="20" uuid="f414bf8d-df2d-40ef-b0b7-002e8e1c014f"/>
+				<textFieldExpression><![CDATA[$F{tanggal_pinjam}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band height="45" splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="54" splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band height="42" splitType="Stretch"/>
+	</summary>
+</jasperReport>
