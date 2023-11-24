@@ -52,8 +52,8 @@ public class TabelKategori extends AbstractTableModel{
             switch (columnIndex-1){
                 case 0 : return list.get(rowIndex).getIdKategori();
                 case 1 : return list.get(rowIndex).getKategori();
-                case 2 : return list.get(rowIndex).jumlahBuku();
-                case 3 : return list.get(rowIndex).jumlahSkripsi();
+                case 2 : return list.get(rowIndex).getJumlahBuku();
+                case 3 : return list.get(rowIndex).getJumlahSkripsi();
                 default : return null;
             }
             

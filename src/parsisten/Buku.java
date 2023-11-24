@@ -76,8 +76,7 @@ public class Buku implements Serializable {
     private Collection<Kategori> kategoriCollection;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "buku")
     private Collection<DetailBuku> detailBukuCollection;
-    
-    
+
     @Transient
     private List<String> pengarang = new ArrayList();
 
@@ -224,27 +223,36 @@ public class Buku implements Serializable {
     public void setPengarang(List<String> pengarang) {
         this.pengarang = pengarang;
     }
-    
-    public String getAllPengarang(){
+
+    public String getAllPengarang() {
         String pengarang = "";
-        for(String peng : this.pengarang){
-                if(pengarang.isEmpty())
-                    pengarang = peng;
-                else 
-                       pengarang += ", " + peng;
+        for (String peng : this.pengarang) {
+            if (pengarang.isEmpty()) {
+                pengarang = peng;
+            } else {
+                pengarang += ", " + peng;
             }
+        }
         return pengarang;
     }
-    
-    public String getAllKategori(){
+
+    public String getAllKategori() {
         String kategori = "";
-        for(Kategori kat : this.kategoriCollection){
-                if(kategori.isEmpty())
-                    kategori = kat.getKategori();
-                else 
-                    kategori += ", " + kat.getKategori();
+        for (Kategori kat : this.kategoriCollection) {
+            if (kategori.isEmpty()) {
+                kategori = kat.getKategori();
+            } else {
+                kategori += ", " + kat.getKategori();
             }
+        }
         return kategori;
     }
-    
+
+    public Integer getJmlDetail() {
+        try {
+            return detailBukuCollection.size();
+        } catch (NullPointerException e) {
+            return 0;
+        }
+    }
 }

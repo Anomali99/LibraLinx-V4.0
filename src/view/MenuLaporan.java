@@ -376,6 +376,15 @@ public class MenuLaporan extends javax.swing.JPanel {
                         case 1:
                             print = servis.laporanPeminjamanPerbulanKembali(pn_print);
                             break;
+                        case 2:
+                            print = servis.laporanPeminjamanTerbanyak(pn_print);
+                            break;
+                        case 3:
+                            print = servis.laporanPeminjamanPerAngkatan(pn_print);
+                            break;
+                        case 4:
+                            print = servis.laporanPeminjamanKategoriTerbanyak(pn_print);
+                            break;
                     }
                     pn_email.setVisible(true);
                     break;

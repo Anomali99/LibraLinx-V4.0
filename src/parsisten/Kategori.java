@@ -112,13 +112,29 @@ public class Kategori implements Serializable {
     public String toString() {
         return "parsisten.Kategori[ idKategori=" + idKategori + " ]";
     }
-    
-    public int jumlahBuku(){
+
+    public int getJumlahBuku() {
         return bukuCollection.size();
     }
-    
-    public int jumlahSkripsi(){
+
+    public int getJumlahSkripsi() {
         return skripsiCollection.size();
     }
-    
+
+    public int getJmlDetail() {
+        int x = 0;
+        try {
+            for (Buku bk : bukuCollection) {
+                x += bk.getDetailBukuCollection().size();
+            }
+        } catch (Exception e) {
+        }
+        try {
+            for (Skripsi bk : skripsiCollection) {
+                x += bk.getDetailSkripsiCollection().size();
+            }
+        } catch (Exception e) {
+        }
+        return x;
+    }
 }

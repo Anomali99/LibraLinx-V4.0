@@ -54,7 +54,7 @@ public class PilihKategori extends javax.swing.JDialog {
         jLabel1 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-        setTitle("Pilih Peminjam");
+        setTitle("Pilih Kategori");
         setIconImage(new javax.swing.ImageIcon(getClass().getResource("/img/iconlibralinx.png")).getImage());
 
         jPanelGradient1.setCEnd(new java.awt.Color(68, 50, 124));

@@ -6,6 +6,8 @@ package dao;
 
 import java.awt.BorderLayout;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.logging.Level;
@@ -25,11 +27,13 @@ import net.sf.jasperreports.view.JRViewer;
 import parsisten.Buku;
 import parsisten.DetailBuku;
 import parsisten.DetailSkripsi;
+import parsisten.Kategori;
 import parsisten.Peminjam;
 import parsisten.Peminjaman;
 import parsisten.Skripsi;
 import servis.ServiceAnggota;
 import servis.ServiceBuku;
+import servis.ServiceKategori;
 import servis.ServiceLaporan;
 import servis.ServicePeminjaman;
 import servis.ServiceSkripsi;
@@ -44,6 +48,7 @@ public class DaoLaporan implements ServiceLaporan {
     private ServiceBuku servisB = new DaoBuku();
     private ServiceSkripsi servisS = new DaoSkripsi();
     private ServiceAnggota servisA = new DaoAnggota();
+    private ServiceKategori servisK = new DaoKategori();
 
     @Override
     public JasperPrint cetakKta(String id, JPanel jp) {
@@ -285,26 +290,12 @@ public class DaoLaporan implements ServiceLaporan {
         return print;
     }
 
-    private List<DetailBuku> combine(List<DetailBuku> bk, List<DetailSkripsi> sk) {
-        for (DetailSkripsi s : sk) {
-            DetailBuku db = new DetailBuku();
-            Buku b = new Buku();
-            b.setIdBuku(s.getSkripsi().getIdSkripsi());
-            b.setJudul(s.getSkripsi().getJudul());
-            b.setBahasa(s.getSkripsi().getBahasa());
-            b.setFotoSampul(s.getSkripsi().getFotoSampul());
-            db.setBuku(b);
-            db.setJumlah(s.getJumlah());
-            bk.add(db);
-        }
-        return bk;
-    }
-
     @Override
     public JasperPrint laporanPeminjamanPerbulanPinjam(JPanel jp) {
         String reportPath = "src/report/PeminjamanPerbulan.jrxml";
         JasperPrint print = null;
         List<Peminjaman> result = servis.ambilData();
+        result.sort(Comparator.comparingInt(Peminjaman -> Integer.parseInt(Peminjaman.getBulanTahunPinjam())));
         try {
             List<List<Peminjaman>> pemin = new ArrayList();
             List<Peminjaman> pem = new ArrayList();
@@ -348,25 +339,11 @@ public class DaoLaporan implements ServiceLaporan {
     }
 
     @Override
-    public JasperPrint laporanPeminjamanTerbanyak(JPanel jp) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-    }
-
-    @Override
-    public JasperPrint laporanPeminjamanPerAngkatan(JPanel jp) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-    }
-
-    @Override
-    public JasperPrint laporanPeminjamanKategoriTerbanyak(JPanel jp) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-    }
-
-    @Override
     public JasperPrint laporanPeminjamanPerbulanKembali(JPanel jp) {
         String reportPath = "src/report/PeminjamanPerbulan.jrxml";
         JasperPrint print = null;
         List<Peminjaman> result = servis.ambilData();
+        result.sort(Comparator.comparingInt(Peminjaman -> Integer.parseInt(Peminjaman.getBulanTahunKembali())));
         try {
             List<List<Peminjaman>> pemin = new ArrayList();
             List<Peminjaman> pem = new ArrayList();
@@ -407,6 +384,143 @@ public class DaoLaporan implements ServiceLaporan {
             Logger.getLogger(DaoLaporan.class.getName()).log(Level.SEVERE, null, ex);
         }
         return print;
+    }
+
+    @Override
+    public JasperPrint laporanPeminjamanTerbanyak(JPanel jp) {
+        String reportPath = "src/report/PeminjamanTerbanyak.jrxml";
+        JasperPrint print = null;
+        List<Skripsi> sk = servisS.ambilData();
+        List<Buku> bk = combineBuku(servisB.ambilData(), sk);
+        try {
+            JRBeanCollectionDataSource dataSource = new JRBeanCollectionDataSource(bk);
+            JasperReport jasperReport = JasperCompileManager.compileReport(reportPath);
+            print = JasperFillManager.fillReport(jasperReport, null, dataSource);
+            jp.removeAll();
+            jp.setLayout(new BorderLayout());
+            jp.repaint();
+            jp.add(new JRViewer(print));
+            jp.revalidate();
+        } catch (JRException ex) {
+            Logger.getLogger(DaoLaporan.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return print;
+    }
+
+    @Override
+    public JasperPrint laporanPeminjamanPerAngkatan(JPanel jp) {
+        String reportPath = "src/report/PeminjamanPerangkatan.jrxml";
+        JasperPrint print = null;
+        List<Peminjaman> result = servis.ambilData();
+        result.sort(Comparator.comparingInt(Peminjaman -> Integer.parseInt(Peminjaman.getPeminjam().getAnggkatan())));
+        try {
+            List<List<Peminjaman>> pemin = new ArrayList();
+            List<Peminjaman> pem = new ArrayList();
+            for (Peminjaman pj : result) {
+                if (!pem.isEmpty()) {
+                    if (pj.getPeminjam().getAnggkatan().equals(pem.get(0).getPeminjam().getAnggkatan())) {
+                        pem.add(pj);
+                    } else {
+                        pemin.add(pem);
+                        pem = new ArrayList();
+                        pem.add(pj);
+                    }
+                } else {
+                    pem.add(pj);
+                }
+            }
+            pemin.add(pem);
+            for (List<Peminjaman> pj : pemin) {
+                HashMap<String, Object> par = new HashMap<>();
+                par.put("Angkatan", pj.get(0).getPeminjam().getAnggkatan());
+                JRBeanCollectionDataSource dataSource = new JRBeanCollectionDataSource(pj);
+                JasperReport jasperReport = JasperCompileManager.compileReport(reportPath);
+                JasperPrint cetak = JasperFillManager.fillReport(jasperReport, par, dataSource);
+                if (print == null) {
+                    print = cetak;
+                } else {
+                    for (JRPrintPage pr : cetak.getPages()) {
+                        print.addPage(pr);
+                    }
+                }
+            }
+            jp.removeAll();
+            jp.setLayout(new BorderLayout());
+            jp.repaint();
+            jp.add(new JRViewer(print));
+            jp.revalidate();
+        } catch (JRException ex) {
+            Logger.getLogger(DaoLaporan.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return print;
+    }
+
+    @Override
+    public JasperPrint laporanPeminjamanKategoriTerbanyak(JPanel jp) {
+        String reportPath = "src/report/PeminjamanKategori.jrxml";
+        JasperPrint print = null;
+        List<Kategori> k = servisK.ambilData();
+        k.sort(Comparator.comparingInt(Kategori -> Kategori.getJmlDetail()));
+        List<Kategori> bok = new ArrayList();
+        for(Kategori book : k){
+            bok.add(0, book);
+        }
+        try {
+            JRBeanCollectionDataSource dataSource = new JRBeanCollectionDataSource(bok);
+            JasperReport jasperReport = JasperCompileManager.compileReport(reportPath);
+            print = JasperFillManager.fillReport(jasperReport, null, dataSource);
+            jp.removeAll();
+            jp.setLayout(new BorderLayout());
+            jp.repaint();
+            jp.add(new JRViewer(print));
+            jp.revalidate();
+        } catch (JRException ex) {
+            Logger.getLogger(DaoLaporan.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return print;
+    }
+
+    private List<DetailBuku> combine(List<DetailBuku> bk, List<DetailSkripsi> sk) {
+        for (DetailSkripsi s : sk) {
+            DetailBuku db = new DetailBuku();
+            Buku b = new Buku();
+            b.setIdBuku(s.getSkripsi().getIdSkripsi());
+            b.setJudul(s.getSkripsi().getJudul());
+            b.setBahasa(s.getSkripsi().getBahasa());
+            b.setFotoSampul(s.getSkripsi().getFotoSampul());
+            db.setBuku(b);
+            db.setJumlah(s.getJumlah());
+            bk.add(db);
+        }
+        return bk;
+    }
+
+    private List<Buku> combineBuku(List<Buku> bk, List<Skripsi> sk) {
+        for (Skripsi s : sk) {
+            Buku b = new Buku();
+            List<DetailBuku> ls = new ArrayList();
+            b.setIdBuku(s.getIdSkripsi());
+            b.setJudul(s.getJudul());
+            b.setKategoriCollection(s.getKategoriCollection());
+            List<String> si = new ArrayList();
+            si.add(s.getPenulis());
+            b.setPengarang(si);
+            for (DetailSkripsi ds : s.getDetailSkripsiCollection()) {
+                DetailBuku db = new DetailBuku();
+                db.setBuku(b);
+                db.setJumlah(ds.getJumlah());
+                db.setPeminjaman(ds.getPeminjaman());
+                ls.add(db);
+            }
+            b.setDetailBukuCollection(ls);
+            bk.add(b);
+        }
+        bk.sort(Comparator.comparingInt(Buku -> Buku.getJmlDetail()));
+        List<Buku> bok = new ArrayList();
+        for(Buku book : bk){
+            bok.add(0, book);
+        }
+        return bok;
     }
 
 }
