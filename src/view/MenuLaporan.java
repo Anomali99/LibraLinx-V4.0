@@ -25,7 +25,7 @@ public class MenuLaporan extends javax.swing.JPanel {
     private ServiceLaporan servis = new DaoLaporan();
     private ServiceEmail sevEmail = new DaoEmail();
     private JasperPrint print = null;
-    
+
     public MenuLaporan() {
         initComponents();
         resetPanel();
@@ -87,12 +87,7 @@ public class MenuLaporan extends javax.swing.JPanel {
 
         jPanel1.setBackground(new java.awt.Color(255, 255, 255));
 
-        cbx_pilih.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "--Jenis Laporan--", "Laporan Anggota", "Laporan Buku", "Laporan Skripsi" }));
-        cbx_pilih.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                cbx_pilihMouseClicked(evt);
-            }
-        });
+        cbx_pilih.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "--Jenis Laporan--", "Laporan Anggota", "Laporan Buku", "Laporan Skripsi", "Laporan Peminjaman" }));
         cbx_pilih.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 cbx_pilihActionPerformed(evt);
@@ -373,6 +368,17 @@ public class MenuLaporan extends javax.swing.JPanel {
                     print = servis.cetakSkripsi(pn_print);
                     pn_email.setVisible(true);
                     break;
+                case 4:
+                    switch (cbx_cari.getSelectedIndex()) {
+                        case 0:
+                            print = servis.laporanPeminjamanPerbulanPinjam(pn_print);
+                            break;
+                        case 1:
+                            print = servis.laporanPeminjamanPerbulanKembali(pn_print);
+                            break;
+                    }
+                    pn_email.setVisible(true);
+                    break;
             }
         } else {
             String k = cbx_cari.getSelectedItem().toString();
@@ -381,15 +387,15 @@ public class MenuLaporan extends javax.swing.JPanel {
                     resetPanel();
                     break;
                 case 1:
-                    print = servis.cetakAnggotaCari(pn_print,cr,k);
+                    print = servis.cetakAnggotaCari(pn_print, cr, k);
                     pn_email.setVisible(true);
                     break;
                 case 2:
-                    print = servis.cetakBukuCari(pn_print,cr,k);
+                    print = servis.cetakBukuCari(pn_print, cr, k);
                     pn_email.setVisible(true);
                     break;
                 case 3:
-                    print = servis.cetakSkripsiCari(pn_print,cr,k);
+                    print = servis.cetakSkripsiCari(pn_print, cr, k);
                     pn_email.setVisible(true);
                     break;
             }
@@ -459,12 +465,9 @@ public class MenuLaporan extends javax.swing.JPanel {
         //        btn_tambah.setIcon(icon);
     }//GEN-LAST:event_btn_tambahMouseMoved
 
-    private void cbx_pilihMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_cbx_pilihMouseClicked
-        
-    }//GEN-LAST:event_cbx_pilihMouseClicked
-
     private void cbx_pilihActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cbx_pilihActionPerformed
         pn_cari.setVisible(true);
+        tf_cari.setVisible(true);
         DefaultComboBoxModel cb = new DefaultComboBoxModel();
         cb.addElement("ID");
         switch (cbx_pilih.getSelectedIndex()) {
@@ -475,12 +478,14 @@ public class MenuLaporan extends javax.swing.JPanel {
                 cb.addElement("PROGRAM STUDI");
                 cb.addElement("FAKULTAS");
                 cb.addElement("ANGKATAN");
+                cbx_cari.setModel(cb);
                 break;
             case 2:
                 cb.addElement("ISBN");
                 cb.addElement("JUDUL");
                 cb.addElement("KATEGORI");
                 cb.addElement("PENGARANG");
+                cbx_cari.setModel(cb);
                 break;
             case 3:
                 cb.addElement("JUDUL");
@@ -489,9 +494,12 @@ public class MenuLaporan extends javax.swing.JPanel {
                 cb.addElement("PENULIS");
                 cb.addElement("PROGRAM STUDI");
                 cb.addElement("FAKULTAS");
+                cbx_cari.setModel(cb);
+                break;
+            case 4:
+                setPeminjaman();
                 break;
         }
-        cbx_cari.setModel(cb);
     }//GEN-LAST:event_cbx_pilihActionPerformed
 
 
@@ -525,5 +533,16 @@ public class MenuLaporan extends javax.swing.JPanel {
         pn_cari.setVisible(false);
         print = null;
     }
-    
+
+    private void setPeminjaman() {
+        tf_cari.setVisible(false);
+        DefaultComboBoxModel cb = new DefaultComboBoxModel();
+        cb.addElement("Perbulan Pinjam");
+        cb.addElement("Perbulan Kembali");
+        cb.addElement("Terbanyak");
+        cb.addElement("Perangkatan");
+        cb.addElement("Kategori Terbanyak");
+        cbx_cari.setModel(cb);
+    }
+
 }

@@ -15,6 +15,7 @@ import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 import javax.swing.JPanel;
 import net.sf.jasperreports.engine.JRException;
+import net.sf.jasperreports.engine.JRPrintPage;
 import net.sf.jasperreports.engine.JasperCompileManager;
 import net.sf.jasperreports.engine.JasperFillManager;
 import net.sf.jasperreports.engine.JasperPrint;
@@ -224,9 +225,6 @@ public class DaoLaporan implements ServiceLaporan {
         par.put("berdasarkan", k);
         JRBeanCollectionDataSource dataSource = new JRBeanCollectionDataSource(result);
         JasperPrint print = null;
-//            for(JRPrintPage pr : print2.getPages()){
-//                print.addPage(pr);
-//            }
         try {
             JasperReport jasperReport = JasperCompileManager.compileReport(reportPath);
             print = JasperFillManager.fillReport(jasperReport, par, dataSource);
@@ -286,8 +284,8 @@ public class DaoLaporan implements ServiceLaporan {
         }
         return print;
     }
-    
-    private List<DetailBuku> combine(List<DetailBuku> bk, List<DetailSkripsi> sk){
+
+    private List<DetailBuku> combine(List<DetailBuku> bk, List<DetailSkripsi> sk) {
         for (DetailSkripsi s : sk) {
             DetailBuku db = new DetailBuku();
             Buku b = new Buku();
@@ -303,17 +301,41 @@ public class DaoLaporan implements ServiceLaporan {
     }
 
     @Override
-    public JasperPrint laporanPeminjamanPerbulan(JPanel jp) {
-        String reportPath = "src/report/LaporanSkripsiCr.jrxml";
-        List<Skripsi> result = new ArrayList();
-        HashMap<String, Object> par = new HashMap<>();
-//        par.put("cari", s);
-//        par.put("berdasarkan", k);
-        JRBeanCollectionDataSource dataSource = new JRBeanCollectionDataSource(result);
+    public JasperPrint laporanPeminjamanPerbulanPinjam(JPanel jp) {
+        String reportPath = "src/report/PeminjamanPerbulan.jrxml";
         JasperPrint print = null;
+        List<Peminjaman> result = servis.ambilData();
         try {
-            JasperReport jasperReport = JasperCompileManager.compileReport(reportPath);
-            print = JasperFillManager.fillReport(jasperReport, par, dataSource);
+            List<List<Peminjaman>> pemin = new ArrayList();
+            List<Peminjaman> pem = new ArrayList();
+            for (Peminjaman pj : result) {
+                if (!pem.isEmpty()) {
+                    if (pj.getBulanTahunPinjam().equals(pem.get(0).getBulanTahunPinjam())) {
+                        pem.add(pj);
+                    } else {
+                        pemin.add(pem);
+                        pem = new ArrayList();
+                        pem.add(pj);
+                    }
+                } else {
+                    pem.add(pj);
+                }
+            }
+            pemin.add(pem);
+            for (List<Peminjaman> pj : pemin) {
+                HashMap<String, Object> par = new HashMap<>();
+                par.put("Tanggal", pj.get(0).getTanggalPinjam());
+                JRBeanCollectionDataSource dataSource = new JRBeanCollectionDataSource(pj);
+                JasperReport jasperReport = JasperCompileManager.compileReport(reportPath);
+                JasperPrint cetak = JasperFillManager.fillReport(jasperReport, par, dataSource);
+                if (print == null) {
+                    print = cetak;
+                } else {
+                    for (JRPrintPage pr : cetak.getPages()) {
+                        print.addPage(pr);
+                    }
+                }
+            }
             jp.removeAll();
             jp.setLayout(new BorderLayout());
             jp.repaint();
@@ -338,6 +360,53 @@ public class DaoLaporan implements ServiceLaporan {
     @Override
     public JasperPrint laporanPeminjamanKategoriTerbanyak(JPanel jp) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public JasperPrint laporanPeminjamanPerbulanKembali(JPanel jp) {
+        String reportPath = "src/report/PeminjamanPerbulan.jrxml";
+        JasperPrint print = null;
+        List<Peminjaman> result = servis.ambilData();
+        try {
+            List<List<Peminjaman>> pemin = new ArrayList();
+            List<Peminjaman> pem = new ArrayList();
+            for (Peminjaman pj : result) {
+                if (!pem.isEmpty()) {
+                    if (pj.getBulanTahunKembali().equals(pem.get(0).getBulanTahunKembali())) {
+                        pem.add(pj);
+                    } else {
+                        pemin.add(pem);
+                        pem = new ArrayList();
+                        pem.add(pj);
+                    }
+                } else {
+                    pem.add(pj);
+                }
+            }
+            pemin.add(pem);
+            for (List<Peminjaman> pj : pemin) {
+                HashMap<String, Object> par = new HashMap<>();
+                par.put("Tanggal", pj.get(0).getTanggalKembali());
+                JRBeanCollectionDataSource dataSource = new JRBeanCollectionDataSource(pj);
+                JasperReport jasperReport = JasperCompileManager.compileReport(reportPath);
+                JasperPrint cetak = JasperFillManager.fillReport(jasperReport, par, dataSource);
+                if (print == null) {
+                    print = cetak;
+                } else {
+                    for (JRPrintPage pr : cetak.getPages()) {
+                        print.addPage(pr);
+                    }
+                }
+            }
+            jp.removeAll();
+            jp.setLayout(new BorderLayout());
+            jp.repaint();
+            jp.add(new JRViewer(print));
+            jp.revalidate();
+        } catch (JRException ex) {
+            Logger.getLogger(DaoLaporan.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return print;
     }
 
 }

@@ -5,7 +5,6 @@
 package dao;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import javax.persistence.EntityManager;
@@ -13,7 +12,6 @@ import javax.persistence.NoResultException;
 import javax.persistence.Persistence;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
-import parsisten.Buku;
 import parsisten.Peminjaman;
 import servis.ServicePeminjaman;
 

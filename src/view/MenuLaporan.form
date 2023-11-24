@@ -199,16 +199,16 @@
                 <Component class="javax.swing.JComboBox" name="cbx_pilih">
                   <Properties>
                     <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
-                      <StringArray count="4">
+                      <StringArray count="5">
                         <StringItem index="0" value="--Jenis Laporan--"/>
                         <StringItem index="1" value="Laporan Anggota"/>
                         <StringItem index="2" value="Laporan Buku"/>
                         <StringItem index="3" value="Laporan Skripsi"/>
+                        <StringItem index="4" value="Laporan Peminjaman"/>
                       </StringArray>
                     </Property>
                   </Properties>
                   <Events>
-                    <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="cbx_pilihMouseClicked"/>
                     <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="cbx_pilihActionPerformed"/>
                   </Events>
                   <AuxValues>

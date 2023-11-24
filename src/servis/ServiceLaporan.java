@@ -16,7 +16,8 @@ public interface ServiceLaporan {
     JasperPrint cetakBuku(JPanel jp);
     JasperPrint cetakSkripsi(JPanel jp);
     JasperPrint cetakAnggota(JPanel jp);
-    JasperPrint laporanPeminjamanPerbulan(JPanel jp);
+    JasperPrint laporanPeminjamanPerbulanPinjam(JPanel jp);
+    JasperPrint laporanPeminjamanPerbulanKembali(JPanel jp);
     JasperPrint laporanPeminjamanTerbanyak(JPanel jp);
     JasperPrint laporanPeminjamanPerAngkatan(JPanel jp);
     JasperPrint laporanPeminjamanKategoriTerbanyak(JPanel jp);

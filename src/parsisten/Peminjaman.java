@@ -203,4 +203,30 @@ public class Peminjaman implements Serializable {
         return tgl;
     }
     
+    public String getBulanTahunPinjam(){
+        SimpleDateFormat inputDateFormat = new SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy", Locale.ENGLISH);
+        SimpleDateFormat outputDateFormat = new SimpleDateFormat("yyyy-MM", Locale.ENGLISH);
+        String tgl = "";
+        try {
+            Date date = inputDateFormat.parse(tanggalPinjam.toString());
+            tgl = outputDateFormat.format(date);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return tgl;
+    }
+    
+    public String getBulanTahunKembali(){
+        SimpleDateFormat inputDateFormat = new SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy", Locale.ENGLISH);
+        SimpleDateFormat outputDateFormat = new SimpleDateFormat("yyyy-MM", Locale.ENGLISH);
+        String tgl = "";
+        try {
+            Date date = inputDateFormat.parse(tanggalKembali.toString());
+            tgl = outputDateFormat.format(date);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return tgl;
+    }
+    
 }
