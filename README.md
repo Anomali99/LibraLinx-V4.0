@@ -11,7 +11,7 @@ LibraLinx adalah aplikasi untuk memanjemen Perpustakan seperti peminjaman, sumba
 
 ## Update
 - Perbaikan bug
-- Penambahan fitur cetak laporan berdasarkan kategori tertentu
+- Penambahan laporan peminjaman
 
 ## Tech
 ##### Perangkat Lunak

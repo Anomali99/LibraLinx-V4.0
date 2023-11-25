@@ -205,7 +205,7 @@ public class Peminjaman implements Serializable {
     
     public String getBulanTahunPinjam(){
         SimpleDateFormat inputDateFormat = new SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy", Locale.ENGLISH);
-        SimpleDateFormat outputDateFormat = new SimpleDateFormat("MMyyyy", Locale.ENGLISH);
+        SimpleDateFormat outputDateFormat = new SimpleDateFormat("yyyyMM", Locale.ENGLISH);
         String tgl = "";
         try {
             Date date = inputDateFormat.parse(tanggalPinjam.toString());
@@ -218,7 +218,7 @@ public class Peminjaman implements Serializable {
     
     public String getBulanTahunKembali(){
         SimpleDateFormat inputDateFormat = new SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy", Locale.ENGLISH);
-        SimpleDateFormat outputDateFormat = new SimpleDateFormat("MMyyyy", Locale.ENGLISH);
+        SimpleDateFormat outputDateFormat = new SimpleDateFormat("yyyyMM", Locale.ENGLISH);
         String tgl = "";
         try {
             Date date = inputDateFormat.parse(tanggalKembali.toString());
