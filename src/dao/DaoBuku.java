@@ -175,17 +175,18 @@ public class DaoBuku implements ServiceBuku {
 
     @Override
     public List<Buku> getByKategori(String kategori) {
-        String sql = "SELECT k FROM Kategori k WHERE LOWER(k.kategori) LIKE ?;";
-        EntityManager em = Persistence.createEntityManagerFactory("LibraLinxPU").createEntityManager();
-        em.getTransaction().begin();
-        Query query = em.createNativeQuery(sql, Kategori.class);
-        query.setParameter(1, "%" + kategori.toLowerCase() + "%");
-        List<Kategori> kat = query.getResultList();
-        em.getTransaction().commit();
-        em.close();
+        List<Kategori> kat = new DaoKategori().getByKategori(kategori);
         List<Buku> list = new ArrayList();
         for(Kategori k : kat){
-            list.addAll(k.getBukuCollection());
+            for(Buku b: k.getBukuCollection()){
+                boolean bol = true;
+                for(Buku bk : list){
+                    if(b.getIdBuku().equals(bk.getIdBuku()))
+                        bol = false;
+                }
+                if(bol)
+                    list.add(b);
+            }
         }
         for (int i = 0; i < list.size(); i++) {
             Buku b = list.get(i);

@@ -151,17 +151,18 @@ public class DaoSkripsi implements ServiceSkripsi {
 
     @Override
     public List<Skripsi> getByKategori(String kategori) {
-        String sql = "SELECT k FROM Kategori k WHERE LOWER(k.kategori) LIKE ?;";
-        EntityManager em = Persistence.createEntityManagerFactory("LibraLinxPU").createEntityManager();
-        em.getTransaction().begin();
-        Query query = em.createNativeQuery(sql, Kategori.class);
-        query.setParameter(1, "%" + kategori.toLowerCase() + "%");
-        List<Kategori> kat = query.getResultList();
-        em.getTransaction().commit();
-        em.close();
+        List<Kategori> kat = new DaoKategori().getByKategori(kategori);
         List<Skripsi> list = new ArrayList();
         for(Kategori k : kat){
-            list.addAll(k.getSkripsiCollection());
+            for(Skripsi b: k.getSkripsiCollection()){
+                boolean bol = true;
+                for(Skripsi bk : list){
+                    if(b.getIdSkripsi().equals(bk.getIdSkripsi()))
+                        bol = false;
+                }
+                if(bol)
+                    list.add(b);
+            }
         }
         return list;
     }
